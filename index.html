@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0f14" />
+  <title>Sign Language Coach</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">🤟</div>
+        <div>
+          <div class="title">Sign Language Coach</div>
+          <div class="subtitle" id="childSubtitle">Personalized learning</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <span id="status" class="status">Offline</span>
+        <button id="installBtn" class="ghost hidden" type="button">Install</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Profile -->
+      <section class="card">
+        <div class="cardHead">
+          <h2>Child Profile</h2>
+          <p>Upload a photo and name. Stored only on this device.</p>
+        </div>
+
+        <div class="profile">
+          <div class="avatarWrap">
+            <img id="childAvatar" class="avatar" alt="Child photo" />
+            <div class="avatarFallback" id="avatarFallback">👧</div>
+          </div>
+
+          <div class="profileFields">
+            <label class="field">
+              <span>Child name</span>
+              <input id="childName" type="text" placeholder="e.g., Zoe" maxlength="30" />
+            </label>
+
+            <label class="field">
+              <span>Photo</span>
+              <input id="childPhoto" type="file" accept="image/*" />
+            </label>
+
+            <div class="row">
+              <button id="saveProfile" class="btn" type="button">Save profile</button>
+              <button id="clearProfile" class="btn danger" type="button">Clear</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Controls -->
+      <section class="card">
+        <div class="toolbar">
+          <div class="seg">
+            <button class="segBtn active" data-view="learn" type="button">Learn</button>
+            <button class="segBtn" data-view="practice" type="button">Practice</button>
+            <button class="segBtn" data-view="manage" type="button">Manage</button>
+          </div>
+
+          <div class="filters">
+            <select id="categorySelect" class="select">
+              <option value="all">All categories</option>
+            </select>
+            <input id="search" class="search" type="search" placeholder="Search word..." />
+          </div>
+        </div>
+      </section>
+
+      <!-- Learn View -->
+      <section id="viewLearn" class="card">
+        <div class="cardHead">
+          <h2>Flashcards</h2>
+          <p>Tap Next/Previous. Add notes and sign images later.</p>
+        </div>
+
+        <div class="flashcard" id="flashcard">
+          <div class="fcTop">
+            <div class="pill" id="fcCategory">Category</div>
+            <div class="pill subtle" id="fcDifficulty">Easy</div>
+          </div>
+
+          <div class="fcBody">
+            <div class="word" id="fcWord">Hello</div>
+            <div class="meaning" id="fcMeaning">Greeting</div>
+
+            <div class="media">
+              <img id="fcImage" class="fcImage hidden" alt="Sign image" />
+              <div id="fcImageEmpty" class="emptyMedia">
+                Add an image of the sign in “Manage”
+              </div>
+            </div>
+
+            <div class="note" id="fcNote">Tip: Smile and wave.</div>
+          </div>
+
+          <div class="fcActions">
+            <button id="prevCard" class="btn ghost" type="button">◀ Previous</button>
+            <button id="shuffleCard" class="btn ghost" type="button">🔀 Shuffle</button>
+            <button id="nextCard" class="btn" type="button">Next ▶</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Practice View -->
+      <section id="viewPractice" class="card hidden">
+        <div class="cardHead">
+          <h2>Practice Mode</h2>
+          <p>Try the sign first, then reveal the answer.</p>
+        </div>
+
+        <div class="practiceBox">
+          <div class="prompt" id="prPrompt">Show the sign for:</div>
+          <div class="practiceWord" id="prWord">Thank you</div>
+
+          <div id="prReveal" class="reveal hidden">
+            <div class="revealRow">
+              <div class="label">Meaning</div>
+              <div id="prMeaning" class="value">Gratitude</div>
+            </div>
+
+            <div class="revealRow">
+              <div class="label">Tip</div>
+              <div id="prNote" class="value">Hand from chin outward.</div>
+            </div>
+
+            <div class="media">
+              <img id="prImage" class="fcImage hidden" alt="Sign image" />
+              <div id="prImageEmpty" class="emptyMedia">No image attached</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <button id="prRevealBtn" class="btn ghost" type="button">Reveal</button>
+            <button id="prNextBtn" class="btn" type="button">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manage View -->
+      <section id="viewManage" class="card hidden">
+        <div class="cardHead">
+          <h2>Manage Words</h2>
+          <p>Add custom words for your child (names, routines, needs).</p>
+        </div>
+
+        <form id="addForm" class="formGrid" autocomplete="off">
+          <label class="field">
+            <span>Word</span>
+            <input id="mWord" type="text" required maxlength="40" placeholder="e.g., Water" />
+          </label>
+
+          <label class="field">
+            <span>Meaning / When to use</span>
+            <input id="mMeaning" type="text" required maxlength="80" placeholder="e.g., Ask for a drink" />
+          </label>
+
+          <label class="field">
+            <span>Category</span>
+            <select id="mCategory" class="select">
+              <option>Basics</option>
+              <option>Needs</option>
+              <option>Feelings</option>
+              <option>Family</option>
+              <option>School</option>
+              <option>Routine</option>
+              <option>Custom</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Difficulty</span>
+            <select id="mDifficulty" class="select">
+              <option>Easy</option>
+              <option>Medium</option>
+              <option>Hard</option>
+            </select>
+          </label>
+
+          <label class="field full">
+            <span>Tip / Note (optional)</span>
+            <input id="mNote" type="text" maxlength="120" placeholder="e.g., Handshape tip" />
+          </label>
+
+          <label class="field full">
+            <span>Sign image (optional)</span>
+            <input id="mImage" type="file" accept="image/*" />
+          </label>
+
+          <div class="row full">
+            <button class="btn" type="submit">Add</button>
+            <button id="resetData" class="btn danger" type="button">Reset to defaults</button>
+          </div>
+        </form>
+
+        <div class="listHead">
+          <h3>Your Library</h3>
+          <p class="muted">Tap an item to edit or delete.</p>
+        </div>
+
+        <div id="libraryList" class="list"></div>
+
+        <!-- Edit Modal -->
+        <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+          <div class="modalCard">
+            <div class="modalHead">
+              <h3>Edit Word</h3>
+              <button id="closeModal" class="iconBtn" type="button">✕</button>
+            </div>
+
+            <div class="formGrid">
+              <label class="field">
+                <span>Word</span>
+                <input id="eWord" type="text" maxlength="40" />
+              </label>
+
+              <label class="field">
+                <span>Meaning</span>
+                <input id="eMeaning" type="text" maxlength="80" />
+              </label>
+
+              <label class="field">
+                <span>Category</span>
+                <input id="eCategory" type="text" maxlength="30" />
+              </label>
+
+              <label class="field">
+                <span>Difficulty</span>
+                <select id="eDifficulty" class="select">
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
+                </select>
+              </label>
+
+              <label class="field full">
+                <span>Tip / Note</span>
+                <input id="eNote" type="text" maxlength="120" />
+              </label>
+
+              <label class="field full">
+                <span>Replace sign image (optional)</span>
+                <input id="eImage" type="file" accept="image/*" />
+              </label>
+
+              <div class="row full">
+                <button id="saveEdit" class="btn" type="button">Save</button>
+                <button id="deleteItem" class="btn danger" type="button">Delete</button>
+              </div>
+            </div>
+
+            <div class="muted small">Images and data are saved locally on your device.</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>Offline-ready • Works on Android & iPhone (Add to Home Screen)</div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
